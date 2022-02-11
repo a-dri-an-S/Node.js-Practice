@@ -1,10 +1,12 @@
 const http = require('http');
 
-//import Node module
-const routes = require('./routes');
+// importing express
+const express = require('express');
+
+const app = express();
 
 // create server
-const server = http.createServer(routes);
+const server = http.createServer(app);
 
 server.listen(3000);
 
