@@ -16,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/a-dri-an-S/Node.js-Practice/issues"
   },
-  "homepage": "https://github.com/a-dri-an-S/Node.js-Practice#readme"
+  "homepage": "https://github.com/a-dri-an-S/Node.js-Practice#readme",
+  "devDependencies": {
+    "nodemon": "^2.0.15"
+  }
 }
