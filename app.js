@@ -4,10 +4,16 @@ const path = require('path');
 // imports
 const express = require('express');
 const bodyParser = require('body-parser');
+const expressHbs = require('express-handlebars');
 
 const app = express();
 
-app.set('view engine', 'pug');
+// setting up template engine for express handlebars
+app.engine('hbs', expressHbs());
+app.set('view engine', 'hbs');
+
+// setting up template engine for pug
+// app.set('view engine', 'pug');
 app.set('views', 'views');
 
 const adminData = require('./routes/admin');
