@@ -4,16 +4,20 @@ const path = require('path');
 // imports
 const express = require('express');
 const bodyParser = require('body-parser');
-const expressHbs = require('express-handlebars');
+// const expressHbs = require('express-handlebars');
 
 const app = express();
 
-// setting up template engine for express handlebars
-app.engine('hbs', expressHbs({layoutsDir: 'views/layouts/', defaultLayout: 'main-layout', extname: 'hbs'}));
-app.set('view engine', 'hbs');
-
+// TEMPLATE ENGINES
 // setting up template engine for pug
 // app.set('view engine', 'pug');
+
+// setting up template engine for express handlebars
+// app.engine('hbs', expressHbs({layoutsDir: 'views/layouts/', defaultLayout: 'main-layout', extname: 'hbs'}));
+// app.set('view engine', 'hbs');
+
+// Setting up template for EJs
+app.set('view engine', 'ejs');
 app.set('views', 'views');
 
 const adminData = require('./routes/admin');
