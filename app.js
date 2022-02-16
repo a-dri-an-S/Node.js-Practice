@@ -9,7 +9,7 @@ const errorController = require('./controllers/error');
 const db = require('./util/database');
 
 // configs
-require('dotenv').config();
+// require('dotenv').config();
 
 const app = express();
 
@@ -20,7 +20,13 @@ app.set('views', 'views');
 const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
 
-db.execute('SELECT * FROM products');
+db.execute('SELECT * FROM products')
+    .then(result => {
+        console.log(result[0], result[1]);
+    })
+    .catch(err => {
+        console.log(err);
+    });
 
 // middleware
 app.use(bodyParser.urlencoded({extended: false}));
