@@ -70,7 +70,6 @@ sequelize
         if (!user.cart) {
             return user.createCart();
         }
-        return user.cart;
     })
     .then(cart => {
         app.listen(3000);
