@@ -7,7 +7,7 @@ class User {
   constructor(username, email, id) {
     this.name = username;
     this.email = email;
-    // this._id = new ObjectId(id);
+     // this._id = new ObjectId(id);
   }
 
   save() {
@@ -23,7 +23,7 @@ class User {
 
   static findById(userId) {
     const db = getDb();
-    return db.collections('users')
+    return db.collection('users')
     .findOne({ _id: new ObjectId(userId) })
     .then(user => {
       console.log(user);
