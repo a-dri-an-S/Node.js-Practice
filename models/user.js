@@ -14,12 +14,12 @@ class User {
   save() {
     const db = getDb();
     return db.collection('users').insertOne(this)
-    .then(result => {
-      console.log(result);
-    })
-    .catch(err => {
-      console.log(err);
-    })
+      .then(result => {
+        console.log(result);
+      })
+      .catch(err => {
+        console.log(err);
+      })
   }
 
   addToCart(product) {
@@ -34,8 +34,8 @@ class User {
       updatedCartItems[cartProductIndex].quantity = newQuantity;
     } else {
       updatedCartItems.push({
-        productId: new ObjectId(product._id), 
-        quantity: newQuantity 
+        productId: new ObjectId(product._id),
+        quantity: newQuantity
       });
     }
     const updatedCart = { items: updatedCartItems };
@@ -54,7 +54,7 @@ class User {
     })
     return db
       .collection('products')
-      .find({_id: {$in: productIds}})
+      .find({ _id: { $in: productIds } })
       .toArray()
       .then(products => {
         return products.map(p => {
@@ -76,37 +76,47 @@ class User {
     return db.collection('users')
       .updateOne(
         { _id: new ObjectId(this._id) },
-        { $set: { cart: {items: updatedCartItems} } }
+        { $set: { cart: { items: updatedCartItems } } }
       );
   }
 
   addOrder() {
     const db = getDb();
-    return db
-      .collection('orders')
-      .insertOne(this.cart)
-      .then(result => {
-        this.cart = { items: [] };
-        return db
+    return this.getCart().then(products => {
+      const order = {
+        items: products,
+        user: {
+          _id: new ObjectId(this._id),
+          name: this.name,
+          email: this.email
+        }
+      };
+      return db
+        .collection('orders')
+        .insertOne(order)
+    })
+    .then(result => {
+      this.cart = { items: [] };
+      return db
         .collection('users')
         .updateOne(
           { _id: new ObjectId(this._id) },
           { $set: { cart: { items: [] } } }
         );
-      });
+    });
   }
 
   static findById(userId) {
     const db = getDb();
     return db.collection('users')
-    .findOne({ _id: new ObjectId(userId) })
-    .then(user => {
-      console.log(user);
-      return user;
-    })
-    .catch(err => {
-      console.log(err);
-    })
+      .findOne({ _id: new ObjectId(userId) })
+      .then(user => {
+        console.log(user);
+        return user;
+      })
+      .catch(err => {
+        console.log(err);
+      })
   }
 
 }
