@@ -1,3 +1,7 @@
+const User = require('../models/user');
+
+require('dotenv').config();
+
 exports.getLogin = (req, res, next) => {
     // const loggedIn = req.get('Cookie').split(';')[2].split("=")[1];
     console.log(req.session.isLoggedIn);
@@ -9,6 +13,11 @@ exports.getLogin = (req, res, next) => {
 }
 
 exports.postLogin = (req, res, next) => {
-    req.session.isLoggedIn = true;
-    res.redirect('/');
+    User.findById(process.env.USER_ID)
+    .then(user => {
+            req.session.isLoggedIn = true;
+            req.session.user = user
+            res.redirect('/');
+        })
+        .catch(err => console.log(err));
 }
