@@ -14,7 +14,7 @@ exports.getLogin = (req, res, next) => {
 
 exports.postLogin = (req, res, next) => {
     User.findById(process.env.USER_ID)
-    .then(user => {
+        .then(user => {
             req.session.isLoggedIn = true;
             req.session.user = user
             res.redirect('/');

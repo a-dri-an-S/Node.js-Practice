@@ -26,12 +26,24 @@ const authRoutes = require('./routes/auth');
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(session({ 
-    secret: process.env.SESSION_SECRET,
-    resave: false,
-    saveUninitialized: false,
-    store: store
-  }));
+app.use(session({
+  secret: process.env.SESSION_SECRET,
+  resave: false,
+  saveUninitialized: false,
+  store: store
+}));
+
+app.use((req, res, next) => {
+  if (!req.session.user) {
+    return next();
+  }
+  User.findById(req.session.user._id)
+    .then(user => {
+      req.user = user;
+      next();
+    })
+    .catch(err => console.log(err));
+})
 
 app.use('/admin', adminRoutes);
 app.use(shopRoutes);
@@ -42,7 +54,7 @@ app.use(errorController.get404);
 mongoose.connect(process.env.DB_CONNECT)
   .then(result => {
     User.findOne()
-      .then (user=> {
+      .then(user => {
         if (!user) {
           const user = new User({
             name: 'Adrian',
@@ -53,7 +65,7 @@ mongoose.connect(process.env.DB_CONNECT)
           });
           user.save();
         }
-    })
+      })
     console.log('Connected to DB')
     app.listen(3000);
   })
