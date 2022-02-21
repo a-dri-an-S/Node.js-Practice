@@ -10,7 +10,20 @@ router.get('/login', authController.getLogin);
 
 router.get('/signup', authController.getSignup);
 
-router.post('/login', authController.postLogin);
+router.post(
+    '/login',
+    [
+        check('email')
+            .isEmail()
+            .withMessage('Please enter a valid email'),
+        body(
+            'password',
+            'Please enter a password that has numbers, letters and min length of 6 characters'
+        )
+            .isLength({ min: 6 })
+            .isAlphanumeric()
+    ],
+    authController.postLogin);
 
 router.post(
     '/signup',
@@ -20,11 +33,11 @@ router.post(
             .withMessage('Please enter a valid email.')
             .custom((value, { req }) => {
                 return User.findOne({ email: value })
-                .then(userDoc => {
-                    if (userDoc) {
-                        return Promise.reject('Email already exists, please choose a different email!');
-                    }
-                });
+                    .then(userDoc => {
+                        if (userDoc) {
+                            return Promise.reject('Email already exists, please choose a different email!');
+                        }
+                    });
             }),
         body(
             'password',
@@ -32,8 +45,9 @@ router.post(
         )
             .isLength({ min: 6 })
             .isAlphanumeric(),
-        body('confirmedPassword')
-            .custom((value, {req}) => {
+        body('confirmPassword')
+            .custom((value, { req }) => {
+                console.log(value, req.body.password)
                 if (value !== req.body.password) {
                     throw new Error('Passwords do not match!')
                 }
