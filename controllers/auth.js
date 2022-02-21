@@ -1,3 +1,5 @@
+const bcrypt = require('bcryptjs');
+
 const User = require('../models/user');
 
 require('dotenv').config();
@@ -39,11 +41,14 @@ exports.postSignup = (req, res, next) => {
     User.findOne({ email: email })
         .then(userDoc => {
             if (userDoc) {
-                res.redirect('/signup');
+                return res.redirect('/signup');
             }
+            return bcrypt.hash(password, 12);
+        })
+        .then(hashedPassword => {
             const user = new User({
                 email: email,
-                password: password,
+                password: hashedPassword,
                 cart: { items: [] }
             });
             return user.save();
