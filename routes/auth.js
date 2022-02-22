@@ -14,16 +14,16 @@ router.post(
     '/login',
     [
         check('email')
+            .normalizeEmail()
             .isEmail()
-            .withMessage('Please enter a valid email')
-            .normalizeEmail(),
+            .withMessage('Please enter a valid email'),
         body(
             'password',
             'Please enter a password that has numbers, letters and min length of 6 characters'
         )
+            .trim()
             .isLength({ min: 6 })
             .isAlphanumeric()
-            .trim()
     ],
     authController.postLogin);
 
@@ -31,6 +31,7 @@ router.post(
     '/signup',
     [
         check('email')
+            .normalizeEmail()
             .isEmail()
             .withMessage('Please enter a valid email.')
             .custom((value, { req }) => {
@@ -40,16 +41,16 @@ router.post(
                             return Promise.reject('Email already exists, please choose a different email!');
                         }
                     });
-            })
-            .normalizeEmail(),
+            }),
         body(
             'password',
             'Please enter a password that has numbers, letters and min length of 6 characters'
-        )
+            )
+            .trim()
             .isLength({ min: 6 })
-            .isAlphanumeric()
-            .trim(),
+            .isAlphanumeric(),
         body('confirmPassword')
+            .trim()
             .custom((value, { req }) => {
                 console.log(value, req.body.password)
                 if (value !== req.body.password) {
@@ -57,7 +58,6 @@ router.post(
                 }
                 return true;
             })
-            .trim()
     ],
     authController.postSignup);
 
