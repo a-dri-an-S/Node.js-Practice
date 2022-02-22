@@ -42,7 +42,12 @@ exports.getSignup = (req, res, next) => {
     res.render('auth/signup', {
         path: '/signup',
         pageTitle: 'Signup',
-        errorMessage: message
+        errorMessage: message,
+        oldInput: { 
+            email: "", 
+            password: "", 
+            confirmPassword: "" 
+        }
     });
 };
 
@@ -89,6 +94,7 @@ exports.postLogin = (req, res, next) => {
 exports.postSignup = (req, res, next) => {
     const email = req.body.email;
     const password = req.body.password;
+    const confirmPassword = req.body.confirmPassword;
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         // console.log(errors.array());
@@ -96,7 +102,12 @@ exports.postSignup = (req, res, next) => {
             render('auth/signup', {
                 path: '/signup',
                 pageTitle: 'Signup',
-                errorMessage: errors.array()[0].msg
+                errorMessage: errors.array()[0].msg,
+                oldInput: { 
+                    email: email, 
+                    password: password, 
+                    confirmPassword: confirmPassword 
+                }
             });
     }
     bcrypt.hash(password, 12)
