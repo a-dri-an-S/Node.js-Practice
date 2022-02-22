@@ -29,10 +29,12 @@ exports.getLogin = (req, res, next) => {
         path: '/login',
         pageTitle: 'Login',
         errorMessage: message,
-        oldInput: { 
-            email: "", 
+        oldInput: {
+            email: "",
             password: ""
         },
+        validationErrors: []
+
     });
 };
 
@@ -47,8 +49,8 @@ exports.getSignup = (req, res, next) => {
         path: '/signup',
         pageTitle: 'Signup',
         errorMessage: message,
-        oldInput: { 
-            email: "", 
+        oldInput: {
+            email: "",
             password: ""
         },
         validationErrors: []
@@ -65,18 +67,28 @@ exports.postLogin = (req, res, next) => {
                 path: '/login',
                 pageTitle: 'Login',
                 errorMessage: errors.array()[0].msg,
-                oldInput: { 
-                    email: email, 
-                    password: password, 
+                oldInput: {
+                    email: email,
+                    password: password,
                 },
+                validationErrors: errors.array()
             });
     }
 
     User.findOne({ email: email })
         .then(user => {
             if (!user) {
-                req.flash('error', "No user associated with provided email!")
-                return res.redirect('/login');
+                return res.status(422).
+                    render('auth/login', {
+                        path: '/login',
+                        pageTitle: 'Login',
+                        errorMessage: "No user associated with provided email!",
+                        oldInput: {
+                            email: email,
+                            password: password,
+                        },
+                        validationErrors: []
+                    });
             }
             bcrypt.compare(password, user.password)
                 .then(doMatch => {
@@ -88,8 +100,17 @@ exports.postLogin = (req, res, next) => {
                             res.redirect('/');
                         });
                     }
-                    req.flash('error', "Password does not match!")
-                    res.redirect('/login');
+                    return res.status(422).
+                    render('auth/login', {
+                        path: '/login',
+                        pageTitle: 'Login',
+                        errorMessage: "Password does not match!",
+                        oldInput: {
+                            email: email,
+                            password: password,
+                        },
+                        validationErrors: []
+                    });
                 })
                 .catch(err => {
                     console.log(err);
@@ -111,8 +132,8 @@ exports.postSignup = (req, res, next) => {
                 path: '/signup',
                 pageTitle: 'Signup',
                 errorMessage: errors.array()[0].msg,
-                oldInput: { 
-                    email: email, 
+                oldInput: {
+                    email: email,
                     password: password,
                     confirmPassword: confirmPassword
                 },
