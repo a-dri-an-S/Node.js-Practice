@@ -15,13 +15,15 @@ router.post(
     [
         check('email')
             .isEmail()
-            .withMessage('Please enter a valid email'),
+            .withMessage('Please enter a valid email')
+            .normalizeEmail(),
         body(
             'password',
             'Please enter a password that has numbers, letters and min length of 6 characters'
         )
             .isLength({ min: 6 })
             .isAlphanumeric()
+            .trim()
     ],
     authController.postLogin);
 
@@ -38,13 +40,15 @@ router.post(
                             return Promise.reject('Email already exists, please choose a different email!');
                         }
                     });
-            }),
+            })
+            .normalizeEmail(),
         body(
             'password',
             'Please enter a password that has numbers, letters and min length of 6 characters'
         )
             .isLength({ min: 6 })
-            .isAlphanumeric(),
+            .isAlphanumeric()
+            .trim(),
         body('confirmPassword')
             .custom((value, { req }) => {
                 console.log(value, req.body.password)
@@ -53,6 +57,7 @@ router.post(
                 }
                 return true;
             })
+            .trim()
     ],
     authController.postSignup);
 
