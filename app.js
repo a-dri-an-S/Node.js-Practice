@@ -12,6 +12,8 @@ const flash = require('connect-flash');
 const multer = require('multer');
 
 const errorController = require('./controllers/error');
+const shopController = require('./controllers/shop');
+const isAuth = require('./middleware/is-auth');
 const User = require('./models/user');
 
 const app = express();
@@ -30,7 +32,11 @@ const fileStorage = multer.diskStorage({
   }
 });
 const fileFilter = (req, file, cb) => {
-  if (file.mimetype === 'image/png' || file.mimetype === 'image.jpg' || file.mimetype === 'image/jpeg') {
+  if (
+      file.mimetype === 'image/png' || 
+      file.mimetype === 'image/jpg' || 
+      file.mimetype === 'image/jpeg'
+    ) {
     cb(null, true);
   } else {
     cb(null, false);
@@ -54,31 +60,38 @@ app.use(session({
   saveUninitialized: false,
   store: store
 }));
-app.use(csrfProtection);
+
 app.use(flash());
 
 app.use((req, res, next) => {
   res.locals.isAuthenticated = req.session.isLoggedIn;
-  res.locals.csrfToken = req.csrfToken();
   next();
-})
+});
 
 app.use((req, res, next) => {
   if (!req.session.user) {
     return next();
   }
   User.findById(req.session.user._id)
-    .then(user => {
-      if (!user) {
-        return next();
-      }
-      req.user = user;
-      next();
-    })
-    .catch(err => {
-      next(new Error(err));
-    });
+  .then(user => {
+    if (!user) {
+      return next();
+    }
+    req.user = user;
+    next();
+  })
+  .catch(err => {
+    next(new Error(err));
+  });
 })
+
+// app.post('create-order', isAuth, shopController.postOrder);
+
+app.use(csrfProtection);
+app.use((req, res, next) => {
+  res.locals.csrfToken = req.csrfToken();
+  next();
+});
 
 app.use('/admin', adminRoutes);
 app.use(shopRoutes);
@@ -98,7 +111,7 @@ app.use((error, req, res, next) => {
 
 mongoose.connect(process.env.DB_CONNECT)
   .then(result => {
-    app.listen(3000);
+    app.listen(process.env.PORT || 3000);
   })
   .catch(err => {
     console.log(err);
