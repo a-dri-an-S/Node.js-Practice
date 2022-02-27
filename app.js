@@ -16,8 +16,8 @@ const compression = require('compression');
 const morgan = require('morgan');
 
 const errorController = require('./controllers/error');
-const shopController = require('./controllers/shop');
-const isAuth = require('./middleware/is-auth');
+// const shopController = require('./controllers/shop');
+// const isAuth = require('./middleware/is-auth');
 const User = require('./models/user');
 
 const app = express();
