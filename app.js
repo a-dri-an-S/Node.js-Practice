@@ -1,4 +1,5 @@
 const path = require('path');
+const fs = require('fs');
 
 require('dotenv').config();
 
@@ -12,6 +13,7 @@ const flash = require('connect-flash');
 const multer = require('multer');
 const helmet = require('helmet');
 const compression = require('compression');
+const morgan = require('morgan');
 
 const errorController = require('./controllers/error');
 const shopController = require('./controllers/shop');
@@ -35,10 +37,10 @@ const fileStorage = multer.diskStorage({
 });
 const fileFilter = (req, file, cb) => {
   if (
-      file.mimetype === 'image/png' || 
-      file.mimetype === 'image/jpg' || 
-      file.mimetype === 'image/jpeg'
-    ) {
+    file.mimetype === 'image/png' ||
+    file.mimetype === 'image/jpg' ||
+    file.mimetype === 'image/jpeg'
+  ) {
     cb(null, true);
   } else {
     cb(null, false);
@@ -52,8 +54,13 @@ const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
 const authRoutes = require('./routes/auth');
 
+const accessLogStream = fs.createWriteStream(path.join(__dirname, 'access.log'),
+  { flags: 'a' }
+);
+
 app.use(helmet());
 app.use(compression());
+app.use(morgan('combined', { stream: accessLogStream }));
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(multer({ storage: fileStorage, fileFilter: fileFilter }).single('image'));
@@ -78,16 +85,16 @@ app.use((req, res, next) => {
     return next();
   }
   User.findById(req.session.user._id)
-  .then(user => {
-    if (!user) {
-      return next();
-    }
-    req.user = user;
-    next();
-  })
-  .catch(err => {
-    next(new Error(err));
-  });
+    .then(user => {
+      if (!user) {
+        return next();
+      }
+      req.user = user;
+      next();
+    })
+    .catch(err => {
+      next(new Error(err));
+    });
 })
 
 // app.post('create-order', isAuth, shopController.postOrder);
