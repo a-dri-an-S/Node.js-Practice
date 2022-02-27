@@ -11,8 +11,8 @@ const MongoDBStore = require('connect-mongodb-session')(session);
 const csrf = require('csurf');
 const flash = require('connect-flash');
 const multer = require('multer');
-const helmet = require('helmet');
-const compression = require('compression');
+// const helmet = require('helmet');
+// const compression = require('compression');
 const morgan = require('morgan');
 
 const errorController = require('./controllers/error');
@@ -59,7 +59,7 @@ const accessLogStream = fs.createWriteStream(path.join(__dirname, 'access.log'),
 );
 
 // app.use(helmet());
-app.use(compression());
+// app.use(compression());
 app.use(morgan('combined', { stream: accessLogStream }));
 
 app.use(bodyParser.urlencoded({ extended: false }));
