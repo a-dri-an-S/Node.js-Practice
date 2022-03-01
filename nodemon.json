@@ -1,9 +1,0 @@
-{
-    "env": {
-        "DB_CONNECT": "mongodb+srv://Adrian:QYA31NAqsoeWKYkN@node.bbajb.mongodb.net/Node?retryWrites=true&w=majority",
-        "SESSION_SECRET": "hfkjhdhsf76t453ghjkgtr",
-        "SENDGRID_API_KEY": "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",
-        "STRIPE_KEY": "pk_test_51ImO3oELLvfyktewGdiV7LUGc52f2XnMUCzIBk0HGzKK7MmYnJZvvZB0WXZ5AysNMp2qGGgUzB9fdhujO9OrPQQU00RwhpOE9L",
-        "STRIPE_SECRET_KEY": "sk_test_51ImO3oELLvfyktew94cqkM6VYeb5Tle7GaMT3tZxhbxkueGRkTUWS4HzzQHS3TowJZFqjZ9J4m7dKoT6KsVgbZ3000Dn9RmD0I"
-    }
-}
